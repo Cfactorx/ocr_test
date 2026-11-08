@@ -25,3 +25,8 @@ F10 前端小改、F11 置信度语义化、F12 README 部署文档。
 
 ## 边界说明
 真实模型识别（Ollama）与 PDF 转图依赖本机环境，QA 以 mock/错误路径覆盖；HTTP 契约与数据层已全量测试。
+
+## 补充：端到端验证（2026-11-08）
+- 服务 `python backend/main.py` 正常启动（127.0.0.1:8080）。
+- `/ocr/recognize` 真实调用 Ollama `gemma4:31b-cloud`：真实繁体图片 8.9s 返回 563 字，输出保持繁体、`details[0].refined=true` ✅
+- `/ocr/save_label` 写入 labels.json + kb.json 成功（type=correction），测试记录已清理。
