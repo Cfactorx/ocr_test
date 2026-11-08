@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OCR runtime data (user labels & knowledge base)
+data/
+
+# Logs
+logs/
+*.log
+
+# Local config
+.env
+
+# OS noise
+Thumbs.db
+Desktop.ini
+.DS_Store

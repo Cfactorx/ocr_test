@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "Bash(python *)",
+      "Bash(curl *)",
+      "Bash(powershell -Command \"Get-Content -Path 'C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--Users-Administrator-Desktop-ocr-test\\\\40f5e956-c31f-4c11-bab9-2de852b0d94a\\\\tasks\\\\b07bbpntl.output' -Tail 10\")",
+      "Bash(powershell -Command \"Get-Content -Path 'C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\E--Users-Administrator-Desktop-ocr-test\\\\40f5e956-c31f-4c11-bab9-2de852b0d94a\\\\tasks\\\\b07bbpntl.output' -Tail 1\")",
+      "Bash(tasklist)",
+      "Bash(findstr python *)",
+      "Bash(taskkill *)",
+      "Bash(netstat -ano)",
+      "Bash(pkill -f main.py)",
+      "Bash(pkill *)",
+      "Bash(cmd.exe *)"
+    ]
+  }
+}
