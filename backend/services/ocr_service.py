@@ -2,6 +2,20 @@
 
 Blocking work (Ollama HTTP, EasyOCR inference, PDF rasterization) is pushed
 to threads so the async event loop is never blocked.
+
+Result fragment contract (``recognize_text`` return value, one dict per
+image or PDF page). The API shape is intentionally preserved for this
+release; only the semantics are documented here:
+
+- ``text``: recognized text for this fragment.
+- ``confidence``: a pipeline status code, NOT a statistical OCR confidence:
+    * 0.0  - fragment came from a failed/error page (e.g. PDF page error).
+    * 0.8  - refinement (second) pass failed; first-pass text returned as
+             fallback (``refined`` is False).
+    * 1.0  - refinement pass succeeded (``refined`` is True).
+  Consumers should rely on the ``refined`` boolean rather than ``confidence``.
+- ``refined``: whether the second (LLM refinement) pass completed.
+- ``box``: bounding boxes; always an empty list in this release.
 """
 
 from __future__ import annotations
@@ -128,6 +142,7 @@ class OCRService:
             return await self._process_image_ocr(buffer.getvalue(), model_name)
         except Exception as exc:  # keep other pages alive
             logger.warning("PDF page %d failed: %s", index + 1, exc)
+            # confidence=0 marks an error-page fragment (see module docstring).
             return [{"text": f"[Page {index + 1} error: {exc}]", "confidence": 0, "box": []}]
 
     # ------------------------------------------------------------------
@@ -169,10 +184,12 @@ class OCRService:
             final_text = await asyncio.to_thread(self.ollama.generate, refine_model, refine_prompt, image_b64)
         except OllamaError:
             logger.warning("Refinement pass failed; falling back to initial text")
+            # confidence=0.8 marks the fallback path (see module docstring).
             return [{"text": initial_text, "confidence": 0.8, "box": [], "refined": False}]
 
         if not final_text:
             final_text = initial_text
+        # confidence=1.0 marks a successful refinement pass.
         return [{"text": final_text, "confidence": 1.0, "box": [], "refined": True}]
 
     async def _generate_safe(self, model: str, prompt: str, image_b64: str, required: bool) -> str:

@@ -212,9 +212,19 @@
             }
         };
 
-        copyBtn.onclick = () => {
-            resultText.select();
-            document.execCommand('copy');
+        copyBtn.onclick = async () => {
+            const text = resultText.value;
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    throw new Error('clipboard API unavailable');
+                }
+            } catch (err) {
+                // Fallback: deprecated but works in non-secure contexts
+                resultText.select();
+                document.execCommand('copy');
+            }
             alert('文本已复制到剪贴板');
         };
     </script>
